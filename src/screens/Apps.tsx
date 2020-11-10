@@ -20,6 +20,12 @@ const Apps = () => {
   // Trigger TranslateY
   const [activeInterpolate, setActiveInterpolate] = React.useState(true);
 
+  // TranslateX
+  const stateTranslateX = React.useState(new Animated.Value(0))[0];
+  const stateRefX = React.useRef(stateTranslateX).current;
+  // Trigger TranslateX
+  const [activeInterpolateX, setActiveInterpolateX] = React.useState(true);
+
   React.useEffect((): void => {
     // For Opacity Updates
     Animated.timing(state, {
@@ -34,7 +40,20 @@ const Apps = () => {
       duration: 200,
       useNativeDriver: true,
     }).start();
-  }, [activeOpacity, activeInterpolate, state, stateTranslateY]);
+
+    Animated.timing(stateTranslateX, {
+      toValue: activeInterpolateX ? 1 : 0,
+      duration: 200,
+      useNativeDriver: true,
+    }).start();
+  }, [
+    activeOpacity,
+    activeInterpolate,
+    state,
+    stateTranslateY,
+    stateTranslateX,
+    activeInterpolateX,
+  ]);
 
   // Trigger Animate Opacity
   const _handleButtonOpacity = (): void => {
@@ -46,9 +65,20 @@ const Apps = () => {
     setActiveInterpolate(!activeInterpolate);
   };
 
+  // Trigger Interpolate
+  const _handleButtonInterpolateX = (): void => {
+    setActiveInterpolateX(!activeInterpolateX);
+  };
+
   // Interpolation For TranslateY StateRef
   const translateY: any = stateRef.interpolate({
-    inputRange: [0, 2],
+    inputRange: [0, 1],
+    outputRange: [0, 100],
+  });
+
+  // Interpolation For TranslateX StateRefX
+  const translateX: any = stateRefX.interpolate({
+    inputRange: [0, 1],
     outputRange: [0, 100],
   });
 
@@ -57,7 +87,7 @@ const Apps = () => {
       <Animated.View
         style={[
           styles.container,
-          { opacity: state, transform: [{ translateY }] },
+          { opacity: state, transform: [{ translateY }, { translateX }] },
         ]}>
         <Text style={{ color: 'white' }}>Animasi</Text>
       </Animated.View>
@@ -70,7 +100,13 @@ const Apps = () => {
         <TouchableOpacity
           onPress={_handleButtonInterpolate}
           style={styles.button}>
-          <Text style={styles.buttonText}>Ini Button Opacity</Text>
+          <Text style={styles.buttonText}>Ini Button TranslateY</Text>
+        </TouchableOpacity>
+
+        <TouchableOpacity
+          onPress={_handleButtonInterpolateX}
+          style={styles.button}>
+          <Text style={styles.buttonText}>Ini Button TranslateX</Text>
         </TouchableOpacity>
       </View>
     </>
